@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  catalog-mongodb:
+    image: mongo:4.2
+    container_name: catalog-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+
+  catalog-service:
+    image: sivaprasadreddy/catalog-service-java-springboot
+    container_name: catalog-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - APP_PROMOTION_SERVICE_URL=http://promotion-service:8082
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:mongo@catalog-mongodb:27017/test?authSource=admin
+    ports:
+      - "8081:8081"
+    restart: unless-stopped

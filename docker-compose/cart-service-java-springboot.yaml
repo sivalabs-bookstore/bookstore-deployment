@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  cart-redis:
+    image: redis:7.0.5-alpine
+    container_name: cart-redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    restart: unless-stopped
+
+  cart-service:
+    image: sivaprasadreddy/cart-service-java-springboot
+    container_name: cart-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - APP_PRODUCT_SERVICE_URL=http://catalog-service:8081
+      - SPRING_DATA_REDIS_HOST=cart-redis
+    ports:
+      - "8084:8084"
+    restart: unless-stopped

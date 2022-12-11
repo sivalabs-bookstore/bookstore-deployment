@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  delivery-mongodb:
+    image: mongo:4.2
+    container_name: delivery-mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+
+  delivery-service:
+    image: sivaprasadreddy/delivery-service-java-springboot
+    container_name: delivery-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:mongo@delivery-mongodb:27017/test?authSource=admin
+      - KAFKA_BROKER=kafka:9092
+    ports:
+      - "8087:8087"
+    restart: unless-stopped

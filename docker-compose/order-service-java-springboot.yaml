@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  orders-db:
+    image: postgres:15-alpine
+    container_name: orders-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "35432:5432"
+
+  order-service:
+    image: sivaprasadreddy/order-service-java-springboot
+    container_name: order-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - APP_PAYMENT_SERVICE_URL=http://payment-service:8083
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://orders-db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - KAFKA_BROKER=kafka:9092
+    ports:
+      - "8085:8085"
+    restart: unless-stopped
