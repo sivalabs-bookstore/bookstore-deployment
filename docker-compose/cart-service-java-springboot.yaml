@@ -7,6 +7,11 @@ services:
       - "6379:6379"
     environment:
       - REDIS_REPLICATION_MODE=master
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
     restart: unless-stopped
 
   cart-service:
