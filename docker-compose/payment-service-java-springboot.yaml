@@ -9,6 +9,11 @@ services:
       - POSTGRES_DB=postgres
     ports:
       - "25432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   payment-service:
     image: sivaprasadreddy/payment-service-java-springboot
