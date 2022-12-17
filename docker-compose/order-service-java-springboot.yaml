@@ -1,5 +1,20 @@
 version: "3.8"
 services:
+
+  orders-redis:
+    image: redis:7.0.5-alpine
+    container_name: orders-redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
   orders-db:
     image: postgres:15-alpine
     container_name: orders-db
@@ -21,11 +36,16 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - APP_PAYMENT_SERVICE_URL=http://payment-service:8083
+      - APP_PRODUCT_SERVICE_URL=http://catalog-service:8081
       - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_URL=jdbc:postgresql://orders-db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATA_REDIS_HOST=orders-redis
       - KAFKA_BROKER=kafka:9092
     ports:
       - "8085:8085"
     restart: unless-stopped
+    depends_on:
+      - orders-db
+      - orders-redis

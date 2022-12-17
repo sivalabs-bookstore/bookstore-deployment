@@ -1,19 +1,20 @@
 version: "3.8"
 services:
-  promotions-db:
-    image: postgres:15-alpine
-    container_name: promotions-db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+
+  catalog-mongodb:
+    image: mongo:4.2
+    container_name: catalog-mongodb
     ports:
-      - "15432:5432"
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: echo 'db.runCommand("ping").ok' | mongo catalog-mongodb:27017/test --quiet
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 5
+      start_period: 40s
 
   payments-db:
     image: postgres:15-alpine
@@ -45,54 +46,39 @@ services:
       timeout: 5s
       retries: 5
 
-  catalog-mongodb:
-    image: mongo:4.2
-    container_name: catalog-mongodb
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo
-      MONGO_INITDB_ROOT_PASSWORD: mongo
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo catalog-mongodb:27017/test --quiet
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
-
-  delivery-mongodb:
-    image: mongo:4.2
-    container_name: delivery-mongodb
-    ports:
-      - "27018:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo
-      MONGO_INITDB_ROOT_PASSWORD: mongo
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo delivery-mongodb:27017/test --quiet
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
-
-  cart-redis:
+  orders-redis:
     image: redis:7.0.5-alpine
-    container_name: cart-redis
+    container_name: orders-redis
     ports:
       - "6379:6379"
     environment:
       - REDIS_REPLICATION_MODE=master
     restart: unless-stopped
 
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    container_name: bookstore-redis-commander
-    hostname: bookstore-redis-commander
-    restart: always
-    environment:
-      - REDIS_HOSTS=local:cart-redis:6379
-    ports:
-      - "9081:8081"
+#  redis-commander:
+#    image: rediscommander/redis-commander:latest
+#    container_name: bookstore-redis-commander
+#    hostname: bookstore-redis-commander
+#    restart: always
+#    environment:
+#      - REDIS_HOSTS=local:orders-redis:6379
+#    ports:
+#      - "9081:8081"
+
+#  delivery-mongodb:
+#    image: mongo:4.2
+#    container_name: delivery-mongodb
+#    ports:
+#      - "27018:27017"
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: mongo
+#      MONGO_INITDB_ROOT_PASSWORD: mongo
+#    healthcheck:
+#      test: echo 'db.runCommand("ping").ok' | mongo delivery-mongodb:27017/test --quiet
+#      interval: 10s
+#      timeout: 10s
+#      retries: 5
+#      start_period: 40s
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -113,15 +99,18 @@ services:
       - "29092:29092"
       - "9101:9101"
     environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_JMX_PORT: 9101
-      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     depends_on:
       - zookeeper

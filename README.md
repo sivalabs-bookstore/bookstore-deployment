@@ -29,18 +29,17 @@ So, if you just want to run one or more services then you can use docker-compose
 > Due to the memory limitations of your computer, sometimes services may not start properly.
 > Please check the container logs to make sure the services started correctly.
 
-If you want to just run **catalog-service-java-springboot** and **promotion-service-java-springboot** services then you can do the following:
+If you want to just run **catalog-service-java-springboot** and **payment-service-java-springboot** services then you can do the following:
 
 ```shell
 $ git clone https://github.com/sivalabs-bookstore/bookstore-deployment.git
 $ cd bookstore-deployment/docker-compose
-$ docker-compose -f promotion-service-java-springboot.yaml -f catalog-service-java-springboot.yaml up -d
+$ docker-compose -f payment-service-java-springboot.yaml -f catalog-service-java-springboot.yaml up -d
 ```
 
 The following services depends on **Kafka**:
 * order-service
 * delivery-service
-* notification-service
 
 If you want to run any service that depends on Kafka then you should include **common-infra.yaml** to the list of YAML files.
 
