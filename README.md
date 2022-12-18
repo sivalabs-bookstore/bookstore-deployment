@@ -48,3 +48,15 @@ For example if you want to run **payment-service-java-springboot** and **order-s
 ```shell  
 docker-compose -f common-infra.yml  -f payment-service-java-springboot.yml -f order-service-java-springboot.yml up -d
 ```
+
+If you want to run all services using java-springboot stack
+
+```shell  
+docker-compose -f common-infra.yml \
+  -f catalog-service-java-springboot.yml \
+  -f payment-service-java-springboot.yml \
+  -f order-service-java-springboot.yml \
+  -f delivery-service-java-springboot.yml \
+  -f bookstore-ui-reactjs.yml \
+  up -d
+```
