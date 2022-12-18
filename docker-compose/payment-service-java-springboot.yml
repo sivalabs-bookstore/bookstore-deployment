@@ -26,5 +26,5 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
     ports:
-      - "8083:8083"
+      - "8082:8082"
     restart: unless-stopped

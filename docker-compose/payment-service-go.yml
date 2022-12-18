@@ -20,12 +20,12 @@ services:
     image: sivaprasadreddy/payment-service-go
     container_name: payment-service
     ports:
-      - "8083:8083"
+      - "8082:8082"
     restart: unless-stopped
     depends_on:
       - payments-db
     environment:
-      APP_PORT: 8083
+      APP_PORT: 8082
       APP_DB_HOST: payments-db
       APP_DB_PORT: 5432
       APP_DB_USERNAME: postgres

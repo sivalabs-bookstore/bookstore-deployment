@@ -34,7 +34,7 @@ If you want to just run **catalog-service-java-springboot** and **payment-servic
 ```shell
 $ git clone https://github.com/sivalabs-bookstore/bookstore-deployment.git
 $ cd bookstore-deployment/docker-compose
-$ docker-compose -f payment-service-java-springboot.yaml -f catalog-service-java-springboot.yaml up -d
+$ docker-compose -f payment-service-java-springboot.yml -f catalog-service-java-springboot.yml up -d
 ```
 
 The following services depends on **Kafka**:
@@ -46,5 +46,5 @@ If you want to run any service that depends on Kafka then you should include **c
 For example if you want to run **payment-service-java-springboot** and **order-service-java-springboot** then you can do the following:
 
 ```shell  
-docker-compose -f common-infra.yaml  -f payment-service-java-springboot.yaml -f order-service-java-springboot.yaml up -d
+docker-compose -f common-infra.yml  -f payment-service-java-springboot.yml -f order-service-java-springboot.yml up -d
 ```

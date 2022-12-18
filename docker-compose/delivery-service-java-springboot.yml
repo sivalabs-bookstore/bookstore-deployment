@@ -23,5 +23,5 @@ services:
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:mongo@delivery-mongodb:27017/test?authSource=admin
       - KAFKA_BROKER=kafka:9092
     ports:
-      - "8087:8087"
+      - "8084:8084"
     restart: unless-stopped
