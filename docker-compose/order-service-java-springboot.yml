@@ -35,7 +35,7 @@ services:
     container_name: order-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - APP_PRODUCT_SERVICE_URL=http://catalog-service:8081
+      - APP_CATALOG_SERVICE_URL=http://catalog-service:8081
       - APP_PAYMENT_SERVICE_URL=http://payment-service:8082
       - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_URL=jdbc:postgresql://orders-db:5432/postgres
