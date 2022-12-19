@@ -65,20 +65,20 @@ services:
 #    ports:
 #      - "9081:8081"
 
-#  delivery-mongodb:
-#    image: mongo:4.2
-#    container_name: delivery-mongodb
-#    ports:
-#      - "27018:27017"
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: mongo
-#      MONGO_INITDB_ROOT_PASSWORD: mongo
-#    healthcheck:
-#      test: echo 'db.runCommand("ping").ok' | mongo delivery-mongodb:27017/test --quiet
-#      interval: 10s
-#      timeout: 10s
-#      retries: 5
-#      start_period: 40s
+  delivery-mongodb:
+    image: mongo:4.2
+    container_name: delivery-mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo delivery-mongodb:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
