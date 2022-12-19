@@ -32,4 +32,4 @@ services:
       APP_DB_PASSWORD: postgres
       APP_DB_NAME: postgres
       APP_DB_RUN_MIGRATIONS: "true"
-      APP_DB_MIGRATIONS_LOCATION: "file:///database/migrations"
+      APP_DB_MIGRATIONS_LOCATION: "file:///internal/database/migrations"
