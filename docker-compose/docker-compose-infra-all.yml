@@ -17,7 +17,7 @@ services:
       start_period: 40s
 
   payments-db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: payments-db
     environment:
       - POSTGRES_USER=postgres
@@ -32,7 +32,7 @@ services:
       retries: 5
 
   orders-db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: orders-db
     environment:
       - POSTGRES_USER=postgres
